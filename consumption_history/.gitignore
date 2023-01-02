@@ -1,0 +1,33 @@
+# -*- mode: gitignore; -*-
+*.csv
+*.tsv
+*.sql
+#*.pdf
+*.http
+.eod
+*.sqlite3
+
+# python
+__pycache__/
+*$py.class
+
+# Virtualenv, pyenv, authenv
+.Python
+pyvenv.cfg
+.venv
+.python-version
+.env
+.cenv
+environment.yml
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+
+# etc
+!.gitignore
+
+# last
+!.keep
