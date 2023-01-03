@@ -16,7 +16,6 @@ __pycache__/
 pyvenv.cfg
 .venv
 .python-version
-.env
 .cenv
 environment.yml
 

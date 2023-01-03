@@ -36,8 +36,3 @@ docker run -v {VOLUME PATH}:/var/lib/mysql -p {CONTAINER PORT}:3306 --name consu
 ```sql
 CREATE database consumption CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 ```
-
-
-
-
-
