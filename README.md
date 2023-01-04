@@ -26,6 +26,8 @@ export MYSQL_PWD={password}
 export MYSQL_PORT={port}
 export SECRET_KEY={secret_key}
 export JWT_ALGORITHM={jwt_algorithm}
+export REDIS_HOST={redis_host}
+export REDIS_PORT={redis_port}
 ```
 
 ## Database

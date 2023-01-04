@@ -21,7 +21,7 @@ class User(CreatedAtUpdatedAt):
             return is_user_created
 
         password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-        user_data = dict(email=email, password_hash=password_hash)
+        user_data = dict(email=email, password_hash=password_hash.decode('utf-8'))
         User.objects.create(**user_data)
         return is_user_created
 
@@ -41,5 +41,5 @@ class User(CreatedAtUpdatedAt):
 
         password_hash = password_hash_qs.first().get('password_hash')
         user_id = password_hash_qs.first().get('id')
-        is_authenticated = bcrypt.checkpw(insert_password.decode('utf-8'), password_hash)
+        is_authenticated = bcrypt.checkpw(insert_password.encode('utf-8'), password_hash.encode('utf-8'))
         return is_authenticated, user_id

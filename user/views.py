@@ -1,11 +1,13 @@
 from django.views.generic import View
 from django.http import JsonResponse
 from django.utils import timezone
+from django.core.cache import cache
 
 from common import constants
 from .models import User
-from .jwt_utils import get_access_token, get_refresh_token
+from .jwt_utils import get_access_token, get_refresh_token, decode_jwt
 from .utils import is_email_validate
+from .decorators import login_required
 
 
 class UserSignUpView(View):
@@ -59,8 +61,32 @@ class UserLoginView(View):
         return JsonResponse(result, status=constants.API_STATUS_CODE_OK)
 
 
+# 로그아웃 별도 구현 X
+# @login_required
+# class UserLogoutView(View):
+#     def post(self, request, *args, **kwargs):
+#         result = dict()
+#         response = JsonResponse(result, status=constants.API_STATUS_CODE_OK)
+#         return response
+
+
 class RefreshTokenView(View):
     def get(self, request, *args, **kwargs):
-        refresh_token = request.jwt_token
+        refresh_token_data = request.jwt_token.get('data')
+        _now = timezone.now()
         result = dict()
+
+        refresh_token_key_string = refresh_token_data.get('key_string')
+        if not refresh_token_key_string:
+            result.update(message=constants.API_STATUS_MESSAGE_TOKEN_INVALID_KEY_STRING)
+            return JsonResponse(result, status=constants.API_STATUS_CODE_FORBIDDEN)
+
+        cache_key = constants.CACHE_KEY_REFRESH_TOKEN_MAPPING.format(random_string=refresh_token_key_string)
+        user_id = cache.get(cache_key, None)
+        if not user_id:
+            result.update(message=constants.API_STATUS_MESSAGE_TOKEN_INVALID_KEY_STRING)
+            return JsonResponse(result, status=constants.API_STATUS_CODE_FORBIDDEN)
+
+        access_token = get_access_token(user_id)
+        result.update(message=constants.API_STATUS_MESSAGE_OK, access_token=access_token)
         return JsonResponse(result, status=constants.API_STATUS_CODE_OK)

@@ -60,7 +60,7 @@ def get_jwt_user(request):
     if not request:
         return AnonymousUser(), False, None
 
-    jwt_token = request.headers.get('AUTHORIZATION')
+    jwt_token = request.headers.get('Authorization')
     if not jwt_token:
         return AnonymousUser(), False, None
 
@@ -73,7 +73,7 @@ def get_jwt_user(request):
         return AnonymousUser(), API_STATUS_MESSAGE_COMMON_TOKEN_ERROR, None
 
     token_type = token_data.get('token_type')
-    if token_type != TOKEN_TYPE_ACCESS or token_type != TOKEN_TYPE_REFRESH:
+    if token_type not in (TOKEN_TYPE_ACCESS, TOKEN_TYPE_REFRESH):
         return AnonymousUser(), API_STATUS_MESSAGE_TOKEN_TYPE_ERROR, None
 
     if token_type == TOKEN_TYPE_REFRESH:
