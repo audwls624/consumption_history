@@ -22,30 +22,6 @@ class CreatedAtUpdatedAt(CreatedAt, UpdatedAt):
     class Meta:
         abstract = True
 
-    def insert_data(self, **kwargs):
-        for key, value in kwargs.items():
-            if not hasattr(self, key):
-                raise ValueError()
-            setattr(self, key, value)
-
-        option = dict(force_insert=True)
-        self.save(**option)
-
-    def update_data(self, **kwargs):
-        update_fields = list()
-
-        for key, value in kwargs.items():
-            if not hasattr(self, key):
-                raise ValueError()
-            if getattr(self, key) != value:
-                setattr(self, key, value)
-                update_fields.append(key)
-
-        if len(update_fields) > 0:
-            update_fields.append('updated_at')
-            option = dict(update_fields=update_fields)
-            self.save(**option)
-
 
 class DeletedAt(models.Model):
     deleted_at = models.DateTimeField(null=True, blank=True, verbose_name='삭제 일시')

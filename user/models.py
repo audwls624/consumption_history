@@ -1,6 +1,8 @@
 import bcrypt
 from django.db import models
+
 from common.models import CreatedAtUpdatedAt
+from .utils import is_email_validate
 
 
 class User(CreatedAtUpdatedAt):
@@ -12,15 +14,15 @@ class User(CreatedAtUpdatedAt):
         db_table = 'user'
         verbose_name = "수정 일시"
 
-    @classmethod
-    def create_user(cls, email, password):
+    @staticmethod
+    def create_user(email, password):
         is_user_created = False
         if not email or not password:
-            raise is_user_created
+            return is_user_created
 
         password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
         user_data = dict(email=email, password_hash=password_hash)
-        cls.insert_data(**user_data)
+        User.objects.create(**user_data)
         return is_user_created
 
     @staticmethod
@@ -29,10 +31,15 @@ class User(CreatedAtUpdatedAt):
         if not insert_email or not insert_password:
             return is_authenticated
 
-        password_hash_qs = User.objects.filter(email=insert_email).values('password_hash')
+        is_email_valid = is_email_validate(insert_email)
+        if not is_email_valid:
+            return is_authenticated
+
+        password_hash_qs = User.objects.filter(email=insert_email).values('id', 'password_hash')
         if not password_hash_qs:
             return is_authenticated
 
         password_hash = password_hash_qs.first().get('password_hash')
+        user_id = password_hash_qs.first().get('id')
         is_authenticated = bcrypt.checkpw(insert_password.decode('utf-8'), password_hash)
-        return is_authenticated
+        return is_authenticated, user_id
