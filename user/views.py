@@ -59,8 +59,8 @@ class UserLoginView(View):
         return JsonResponse(result, status=constants.API_STATUS_CODE_OK)
 
 
-@login_required
 class UserLogoutView(View):
+    @login_required
     def post(self, request, *args, **kwargs):
         refresh_token = request.POST.get('refresh_token')
         result = dict()
