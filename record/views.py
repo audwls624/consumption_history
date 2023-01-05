@@ -1,11 +1,7 @@
-import json
-from django.views.generic import View
 from django.http import JsonResponse
-from django.utils import timezone
-from django.core.cache import cache
+from django.views.generic import View
 
 from common import constants
-from user.models import User
 from user.decorators import login_required
 from .models import HouseholdAccount
 from .utils import get_account_short_url
