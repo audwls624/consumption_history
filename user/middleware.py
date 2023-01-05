@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AnonymousUser
 from django.http import JsonResponse
+from django.utils.functional import SimpleLazyObject
 from .jwt_utils import get_jwt_user
 from common import constants
 
@@ -10,7 +11,8 @@ class JWTMiddleWare:
 
     def __call__(self, request):
         if request.headers.get('Authorization'):
-            request.user, request.jwt_error_code, request.jwt_token = get_jwt_user(request)
+            # request.user, request.jwt_error_code, request.jwt_token = get_jwt_user(request)
+            request.user, request.jwt_error_code, request.jwt_token = SimpleLazyObject(lambda: get_jwt_user(request))
             if request.user == AnonymousUser():
                 # 엑세스 토큰 에러
                 if request.jwt_error_code:

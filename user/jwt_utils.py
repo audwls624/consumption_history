@@ -90,3 +90,16 @@ def get_jwt_user(request):
     except Exception as e:
         return AnonymousUser(), API_STATUS_MESSAGE_COMMON_TOKEN_ERROR, decoded_jwt
     return user_obj, False, decoded_jwt
+
+
+def delete_refresh_token_key(refresh_token):
+    refresh_token_data = refresh_token.get('data')
+    if not refresh_token_data:
+        return False
+    key_string = refresh_token_data.get('key_string')
+    if not key_string:
+        return False
+
+    cache_key = CACHE_KEY_REFRESH_TOKEN_MAPPING.format(random_string=key_string)
+    cache.delete(cache_key)
+    return True

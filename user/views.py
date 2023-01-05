@@ -5,16 +5,15 @@ from django.core.cache import cache
 
 from common import constants
 from .models import User
-from .jwt_utils import get_access_token, get_refresh_token, decode_jwt
+from .jwt_utils import get_access_token, get_refresh_token, decode_jwt, delete_refresh_token_key
 from .utils import is_email_validate
 from .decorators import login_required
 
 
 class UserSignUpView(View):
     def post(self, request, *args, **kwargs):
-        body = request.POST
-        request_email = body.get('user_email')
-        request_passowrd = body.get('password')
+        request_email = request.POST.get('user_email')
+        request_passowrd = request.POST.get('password')
         result = dict()
 
         if not request_email or not request_passowrd:
@@ -37,9 +36,8 @@ class UserSignUpView(View):
 
 class UserLoginView(View):
     def post(self, request, *args, **kwargs):
-        body = request.POST
-        request_email = body.get('user_email')
-        request_passowrd = body.get('password')
+        request_email = request.POST.get('user_email')
+        request_passowrd = request.POST.get('password')
         is_authenticated = False
         result = dict()
 
@@ -61,13 +59,24 @@ class UserLoginView(View):
         return JsonResponse(result, status=constants.API_STATUS_CODE_OK)
 
 
-# 로그아웃 별도 구현 X
-# @login_required
-# class UserLogoutView(View):
-#     def post(self, request, *args, **kwargs):
-#         result = dict()
-#         response = JsonResponse(result, status=constants.API_STATUS_CODE_OK)
-#         return response
+@login_required
+class UserLogoutView(View):
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.POST.get('refresh_token')
+        result = dict()
+
+        decoded_jwt, jwt_error_msg = decode_jwt(refresh_token)
+        if jwt_error_msg:
+            result.update(message=jwt_error_msg)
+            return JsonResponse(result, status=constants.API_STATUS_CODE_BAD_REQUEST)
+
+        is_deleted = delete_refresh_token_key(decoded_jwt)
+        if not is_deleted:
+            result.update(message=constants.API_STATUS_MESSAGE_BAD_REQUEST)
+            return JsonResponse(result, status=constants.API_STATUS_CODE_BAD_REQUEST)
+
+        result.update(message=constants.API_STATUS_MESSAGE_OK)
+        return JsonResponse(result, status=constants.API_STATUS_CODE_OK)
 
 
 class RefreshTokenView(View):
