@@ -27,11 +27,6 @@ class DeletedAt(models.Model):
     deleted_at = models.DateTimeField(null=True, blank=True, verbose_name='삭제 일시')
     is_deleted = models.BooleanField(db_index=True, default=False, verbose_name='삭제 여부')
 
-    def update_delete(self):
-        self.is_deleted = True
-        self.deleted_at = timezone.now()
-        self.save()
-
     class Meta:
         abstract = True
         verbose_name = "삭제 일시"

@@ -1,7 +1,13 @@
 # Consumption_History
 
-## Goal
-- 유저가 본인의 소비내역을 기록/관리
+## Implemented functions(구현 기능)
+- 유저 회원가입/로그인/로그아웃 기능 (JWT 토큰 인증 방식 사용)
+- 유저의 가계부 등록/수정/삭제/조회(전체 + 상세) 기능
+- 가계부 특정 세부 내역 단축 URL 생성 가능
+
+### * 미구현
+- 가계부 세부 내역 복제(무슨 말인지 모르겠습니다)
+- 테스트 케이스 작성
 
 ## Python
 
@@ -37,7 +43,4 @@ export REDIS_PORT={redis_port}
 # M1 mac의 경우 --platform linux/amd64 옵션 추가
 docker run -v {VOLUME PATH}:/var/lib/mysql -p {CONTAINER PORT}:3306 --name consumption_history -e MYSQL_ROOT_PASSWORD={PASSWORD} -d mysql:5.7 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 ```
-- Database 생성
-```sql
-CREATE database consumption CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-```
+

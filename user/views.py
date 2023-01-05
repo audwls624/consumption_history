@@ -66,7 +66,7 @@ class UserLogoutView(View):
         result = dict()
 
         decoded_jwt, jwt_error_msg = decode_jwt(refresh_token)
-        if jwt_error_msg:
+        if not decoded_jwt:
             result.update(message=jwt_error_msg)
             return JsonResponse(result, status=constants.API_STATUS_CODE_BAD_REQUEST)
 
