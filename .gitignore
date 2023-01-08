@@ -21,3 +21,6 @@ gen
 
 # last
 !.keep
+
+.sql
+.env
